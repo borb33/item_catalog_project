@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
-    return "Catalog"
+    return render_template('catalog.html')
 
 
 @app.route('/catalog/new')
