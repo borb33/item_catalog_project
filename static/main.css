@@ -249,3 +249,60 @@ footer .mdl-logo a {
   padding: 0 40px;
   margin-bottom: 0;
 }
+
+.file-upload {
+	margin: 0 10px 0 0;
+}
+.file-upload input.upload {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+  z-index: 10;
+	font-size: 20px;
+	cursor: pointer;
+	height: 36px;
+	opacity: 0;
+	filter: alpha(opacity=0); }
+
+#fileuploadurl{
+  border: none;
+  font-size: 12px;
+  padding-left: 0;
+  width: 250px;
+}
+
+.btn-create {
+  margin-top: 40px;
+}
+
+.logo {
+  text-decoration: none;
+  color: #fff;
+}
+
+.mdl-card__title {
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: space-between;
+  justify-content: space-between;
+}
+
+.mdl-layout__drawer h6 {
+  padding: 0 40px;
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.mdl-layout__drawer .mdl-navigation{
+  padding-top: 5px;
+}
+
+.category-manage {
+  padding: 0 16px;
+  font-size: 10px;
+  line-height: 10px;
+  margin-top: -15px;
+  z-index: 2;
+}

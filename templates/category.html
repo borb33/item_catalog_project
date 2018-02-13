@@ -1,0 +1,58 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="mdl-layout__drawer">
+    <h4>Categories</h4>
+    <a href="{{url_for('newCategory')}}"><h6>Add new category</h6></a>
+    {% if categories %}
+    <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
+        {% for category in categories %}
+        <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
+        <span class="category-manage">
+            <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
+            <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
+        </span>
+        {% endfor %}
+    </nav>
+    {% endif %}
+</div>
+
+<main class="mdl-layout__content">
+<div class="site-content">
+    <div class="mdl-grid site-max-width">
+      <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp page-content">
+        <div class="mdl-card__title">
+            <h1 class="mdl-card__title-text">
+                {{category.name}}
+            </h1>
+            <span class="category-manage-title">
+                <a href="{{url_for('editCategory', name=category.name)}}"><i class="material-icons">edit</i></a>
+                <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}"><i class="material-icons">delete</i></a>
+            </span>
+        </div>
+        <div class="mdl-card__media">
+            <img class="article-image" src="{{ url_for('uploaded_file', filename=category.image) }}" border="0" alt="{{category.name}}">
+        </div>
+        <div class="mdl-grid site-max-width">
+            <div class="mdl-cell mdl-cell--12-col">
+                <div class="mdl-card__supporting-text">
+                    {{category.description}}
+                </div>
+            </div>
+        </div>
+      </div>
+
+        <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp page-content">
+            <div class="mdl-card__title">
+                <h3 class="mdl-card__title-text">
+                    Items
+                </h3>
+            </div>
+            <div class="mdl-grid site-max-width">
+                <div class="mdl-cell mdl-cell--12-col">
+                    <a href="#">Add new item</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}

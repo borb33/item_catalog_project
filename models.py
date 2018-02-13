@@ -21,8 +21,8 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
-    image = Column(String(50))
     description = Column(String(250))
+    image = Column(String(50))
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
@@ -32,7 +32,6 @@ class Category(Base):
         return {
            'name':        self.name,
            'id':          self.id,
-           'image':       self.image,
            'description': self.description,
            'user':        self.user_id,
         }
