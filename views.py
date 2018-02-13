@@ -79,7 +79,7 @@ def newCategory():
         )
         session.add(category)
         session.commit()
-        return redirect(url_for('showCatalog'))
+        return redirect(url_for('showCategory', name=name))
     else:
         return render_template('newCategory.html', categories=categories)
 
@@ -95,6 +95,7 @@ def editCategory(name):
         description = request.form['description']
 
         if file.filename != '' and allowed_file(file.filename):
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
             now = datetime.datetime.now()
             filename = ''.join([now.strftime("%Y%m%d%H%M_"),
                                secure_filename(file.filename)])
@@ -122,6 +123,7 @@ def editCategory(name):
 def deleteCategory(id):
     category = session.query(Category).filter_by(id=id).one()
     if request.method == 'POST':
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
         session.delete(category)
         session.commit()
         return 'OK'
