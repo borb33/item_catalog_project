@@ -29,6 +29,19 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# Upload file
+def upload_file(file):
+    if file and allowed_file(file.filename):
+        now = datetime.datetime.now()
+        filename = ''.join([now.strftime("%Y%m%d%H%M_"),
+                            secure_filename(file.filename)])
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    elif not allowed_file(file.filename):
+        # ERROR MESSAGE
+        return False
+    return filename
+
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
@@ -54,23 +67,18 @@ def showCategory(name):
 def newCategory():
     categories = session.query(Category).all()
     if request.method == 'POST':
-        # Upload file
         file = request.files['file']
         name = request.form['name']
         description = request.form['description']
 
-        if file.filename == '' or name == '' or description == '':
+        if name == '' or description == '' or file.filename == '':
             # ERROR MESSAGE
             return redirect(request.url)
 
-        if file and allowed_file(file.filename):
-            now = datetime.datetime.now()
-            filename = ''.join([now.strftime("%Y%m%d%H%M_"),
-                               secure_filename(file.filename)])
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        elif not allowed_file(file.filename):
-            # ERROR MESSAGE
-            return redirect(request.url)
+        filename = upload_file(file)
+
+        if not filename:
+            return redirect(request.url) 
 
         category = Category(
             name=name,
@@ -89,20 +97,17 @@ def editCategory(name):
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
     if request.method == 'POST':
-        # Upload file
         file = request.files['file']
         name = request.form['name']
         description = request.form['description']
 
-        if file.filename != '' and allowed_file(file.filename):
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
-            now = datetime.datetime.now()
-            filename = ''.join([now.strftime("%Y%m%d%H%M_"),
-                               secure_filename(file.filename)])
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        elif file.filename != '' and not allowed_file(file.filename):
-            # ERROR MESSAGE
-            return redirect(request.url)
+        if file.filename != '':
+            filename = upload_file(file)
+            if filename:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
+            else:
+                # ERROR MESSAGE
+                return redirect(request.url)
 
         if name:
             category.name = name
@@ -129,9 +134,12 @@ def deleteCategory(id):
         return 'OK'
 
 
-@app.route('/catalog/<string:name>/new')
+@app.route('/catalog/<string:name>/new', methods=['GET', 'POST'])
 def newItem(name):
-    return "New item for category %s" % name
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(name=name).one()
+    return render_template('newItem.html',
+                               categories=categories, category=category)
 
 
 @app.route('/catalog/<string:name>/<string:item>/edit')
