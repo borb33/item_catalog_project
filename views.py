@@ -59,8 +59,11 @@ def showCatalog():
 def showCategory(name):
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
+    items = session.query(Item).filter_by(category_id=category.id).all()
     return render_template('category.html',
-                           categories=categories, category=category)
+                           categories=categories,
+                           category=category,
+                           items=items)
 
 
 @app.route('/catalog/new', methods=['GET', 'POST'])
@@ -78,7 +81,7 @@ def newCategory():
         filename = upload_file(file)
 
         if not filename:
-            return redirect(request.url) 
+            return redirect(request.url)
 
         category = Category(
             name=name,
@@ -104,7 +107,8 @@ def editCategory(name):
         if file.filename != '':
             filename = upload_file(file)
             if filename:
-                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
+                                       category.image))
             else:
                 # ERROR MESSAGE
                 return redirect(request.url)
@@ -138,18 +142,100 @@ def deleteCategory(id):
 def newItem(name):
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
-    return render_template('newItem.html',
+    if request.method == 'POST':
+        file = request.files['file']
+        name = request.form['name']
+        description = request.form['description']
+
+        # Check if the name is already used
+        try:
+            newItem = session.query(Item).filter_by(
+                name=name, category_id=category.id).one()
+            if newItem:
+                # ERROR MESSAGE
+                return redirect(request.url)
+        except:
+            pass
+
+        if name == '' or description == '' or file.filename == '':
+            # ERROR MESSAGE
+            return redirect(request.url)
+
+        filename = upload_file(file)
+
+        if not filename:
+            return redirect(request.url)
+
+        item = Item(
+            name=name,
+            image=filename,
+            description=description,
+            category_id=category.id
+        )
+        session.add(item)
+        session.commit()
+        return redirect(url_for('showCategory', name=category.name))
+    else:
+        return render_template('newItem.html',
                                categories=categories, category=category)
 
 
-@app.route('/catalog/<string:name>/<string:item>/edit')
+@app.route('/catalog/<string:name>/<string:item>/edit',
+           methods=['GET', 'POST'])
 def editItem(name, item):
-    return "Edit item %s from category %s" % (item, name)
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(name=name).one()
+    item = session.query(Item).filter_by(name=item,
+                                         category_id=category.id).one()
+    if request.method == 'POST':
+        file = request.files['file']
+        name = request.form['name']
+        description = request.form['description']
+
+        # Check if the name is already used
+        try:
+            newItem = session.query(Item).filter_by(
+                name=name, category_id=category.id).one()
+            if newItem.name != item.name:
+                # ERROR MESSAGE
+                return redirect(request.url)
+        except:
+            pass
+
+        if file.filename != '':
+            filename = upload_file(file)
+            if filename:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
+                                       item.image))
+            else:
+                # ERROR MESSAGE
+                return redirect(request.url)
+
+        if name:
+            item.name = name
+        if description:
+            item.description = description
+        if file.filename != '':
+            item.image = filename
+
+        session.add(item)
+        session.commit()
+        return redirect(url_for('showCategory', name=category.name))
+    else:
+        return render_template('editItem.html',
+                               categories=categories,
+                               category=category,
+                               item=item)
 
 
-@app.route('/catalog/<string:name>/<string:item>/delete')
-def deleteItem(name, item):
-    return "Delete item %s from category %s" % (item, name)
+@app.route('/catalog/<string:name>/<int:id>/delete', methods=['POST'])
+def deleteItem(name, id):
+    item = session.query(Item).filter_by(id=id).one()
+    if request.method == 'POST':
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], item.image))
+        session.delete(item)
+        session.commit()
+        return 'OK'
 
 
 if __name__ == '__main__':

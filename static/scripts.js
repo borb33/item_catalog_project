@@ -9,9 +9,14 @@ if(fileAttachment != null) {
 $(function() {
     $('.delete-btn').click(function(event) {
         event.preventDefault();
-        if(confirm('Are you sure to delete the category '+ $(this).attr('data-name') +'?')) {
+        var item = $(this).attr('data-item');
+        var name = $(this).attr('data-name');
+        var location = item !== undefined ? '/catalog/'+name : '/';
+        var itemMessage = item !== undefined ? 'the item '+item+' for ' : '';
+
+        if(confirm('Are you sure to delete '+itemMessage+'the category '+name+'?')) {
             $.post($(this).attr('href'), function(data) {
-                window.location.replace('/');
+                window.location.replace(location);
             });
         }
     });

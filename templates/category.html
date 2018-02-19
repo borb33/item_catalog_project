@@ -49,8 +49,29 @@
             </div>
             <div class="mdl-grid site-max-width">
                 <div class="mdl-cell mdl-cell--12-col">
-                    <a href="#">Add new item</a>
+                    <a href="{{url_for('newItem', name=category.name)}}">Add new item</a>
                 </div>
+                {% if items %}
+                {% for item in items %}
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__media">
+                            <img class="article-image" src="{{ url_for('uploaded_file', filename=item.image) }}" border="0" alt="{{item.name}}">
+                        </div>
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{item.name}}</h2>
+                            <span class="item-manage-title">
+                                <a href="{{url_for('editItem', name=category.name, item=item.name)}}"><i class="material-icons">edit</i></a>
+                                <a href="{{url_for('deleteItem', name=category.name, id=item.id)}}" class="delete-btn" data-name="{{category.name}}" data-item="{{item.name}}"><i class="material-icons">delete</i></a>
+                            </span>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            {{item.description}}
+                        </div>
+                    </div>
+                {% endfor %}
+                {% else %}
+                <p>There aren't any items for this category.</p>
+                {% endif %}
             </div>
         </div>
     </div>
