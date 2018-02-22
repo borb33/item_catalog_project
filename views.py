@@ -74,6 +74,16 @@ def newCategory():
         name = request.form['name']
         description = request.form['description']
 
+        # Check if the name is already used
+        try:
+            newCategory = session.query(Category).filter_by(
+                name=name).one()
+            if newCategory:
+                # ERROR MESSAGE
+                return redirect(request.url)
+        except:
+            pass
+
         if name == '' or description == '' or file.filename == '':
             # ERROR MESSAGE
             return redirect(request.url)
@@ -103,6 +113,16 @@ def editCategory(name):
         file = request.files['file']
         name = request.form['name']
         description = request.form['description']
+
+        # Check if the name is already used
+        try:
+            newCategory = session.query(Category).filter_by(
+                name=name).one()
+            if newCategory.name != category.name:
+                # ERROR MESSAGE
+                return redirect(request.url)
+        except:
+            pass
 
         if file.filename != '':
             filename = upload_file(file)
