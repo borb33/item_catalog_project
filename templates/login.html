@@ -1,0 +1,84 @@
+{% extends "main.html" %}
+{% block content %}
+<div class="mdl-layout__drawer">
+    <h4>Categories</h4>
+    <a href="{{url_for('newCategory')}}"><h6>Add new category</h6></a>
+    {% if categories %}
+    <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
+        {% for category in categories %}
+        <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
+        <span class="category-manage">
+            <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
+            <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
+        </span>
+        {% endfor %}
+    </nav>
+    {% endif %}
+</div>
+
+<main class="mdl-layout__content">
+<div class="site-content">
+    <div class="mdl-grid site-max-width">
+      <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp page-content">
+        <div class="mdl-grid site-max-width">
+            <div class="mdl-cell mdl-cell--12-col">
+                <div class="mdl-card__supporting-text">
+                    <!-- GOOGLE PLUS SIGN IN BUTTON-->
+
+                    <div id="signinButton">
+                        <span class="g-signin"
+                        data-scope="openid email"
+                        data-clientid="176930772438-ico72f8oljsc9gt24aih0tbaglc9lqjk.apps.googleusercontent.com"
+                        data-redirecturi="postmessage"
+                        data-accesstype="offline"
+                        data-cookiepolicy="single_host_origin"
+                        data-callback="signInCallback"
+                        data-approvalprompt="force">
+                        </span>
+                    </div>
+  
+                    <div id="result"></div>
+
+                    <!--END GOOGLE PLUS SIGN IN BUTTON -->
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+  <script>
+    function signInCallback(authResult) {
+      if (authResult['code']) {
+    
+        // Hide the sign-in button now that the user is authorized
+        $('#signinButton').attr('style', 'display: none');
+    
+        // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+        $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{STATE}}',
+          processData: false,
+          data: authResult['code'],
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
+            // Handle or verify the server response if necessary.
+            if (result) {
+              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+             setTimeout(function() {
+              window.location.href = "catalog";
+             }, 4000);
+              
+    
+          } else if (authResult['error']) {
+    
+        console.log('There was an error: ' + authResult['error']);
+      } else {
+            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+             }
+    
+          }
+          
+      }); } }
+    </script>
+{% endblock %}

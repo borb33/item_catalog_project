@@ -306,3 +306,11 @@ footer .mdl-logo a {
   margin-top: -15px;
   z-index: 2;
 }
+
+#log-section {
+  display: inline-block;
+  position: fixed;
+  right: 0;
+  margin: 10px;
+  z-index: 4;
+}

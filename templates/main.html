@@ -12,6 +12,13 @@
   </head>
   <body id="top">
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <div id="log-section">
+        {%if 'username' not in session %}
+        <a href="{{url_for('showLogin')}}" class="mdl-button mdl-button--raised mdl-button--accent">Login </a>
+        {% else %}
+        <a href="{{url_for('disconnect')}}" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Logout </a>
+        {% endif %}
+      </div>
       <header class="mdl-layout__header mdl-layout__header--waterfall site-header">
         <div class="mdl-layout__header-row site-logo-row"><span class="mdl-layout__title">
             <span class="site-description"><a class="logo" href="{{url_for('showCatalog')}}"><h1>Sports Catalog</h1></a></span></span></div>
