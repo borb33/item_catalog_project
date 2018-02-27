@@ -2,15 +2,19 @@
 {% block content %}
 <div class="mdl-layout__drawer">
     <h4>Categories</h4>
+    {%if 'username' in session %}
     <a href="{{url_for('newCategory')}}"><h6>Add new category</h6></a>
+    {% endif %}
     {% if categories %}
     <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
         {% for category in categories %}
         <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
+        {% if category.user_id == session['user_id'] %}
         <span class="category-manage">
             <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
             <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
         </span>
+        {% endif %}
         {% endfor %}
     </nav>
     {% endif %}

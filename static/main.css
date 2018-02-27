@@ -300,7 +300,7 @@ footer .mdl-logo a {
 }
 
 .category-manage {
-  padding: 0 16px;
+  padding: 0 40px;
   font-size: 10px;
   line-height: 10px;
   margin-top: -15px;
@@ -313,4 +313,10 @@ footer .mdl-logo a {
   right: 0;
   margin: 10px;
   z-index: 4;
+}
+
+@media screen and (max-width: 1024px) {
+  .category-manage {
+    padding: 0 16px;
+  }
 }

@@ -2,15 +2,19 @@
 {% block content %}
 <div class="mdl-layout__drawer">
     <h4>Categories</h4>
+    {%if 'username' in session %}
     <a href="{{url_for('newCategory')}}"><h6>Add new category</h6></a>
+    {% endif %}
     {% if categories %}
     <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
         {% for category in categories %}
         <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
+        {% if category.user_id == session['user_id'] %}
         <span class="category-manage">
             <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
             <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
         </span>
+        {% endif %}
         {% endfor %}
     </nav>
     {% endif %}
@@ -24,10 +28,12 @@
             <h1 class="mdl-card__title-text">
                 {{category.name}}
             </h1>
+            {% if category.user_id == session['user_id'] %}
             <span class="category-manage-title">
                 <a href="{{url_for('editCategory', name=category.name)}}"><i class="material-icons">edit</i></a>
                 <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}"><i class="material-icons">delete</i></a>
             </span>
+            {% endif %}
         </div>
         <div class="mdl-card__media">
             <img class="article-image" src="{{ url_for('uploaded_file', filename=category.image) }}" border="0" alt="{{category.name}}">
@@ -49,7 +55,9 @@
             </div>
             <div class="mdl-grid site-max-width">
                 <div class="mdl-cell mdl-cell--12-col">
+                    {% if category.user_id == session['user_id'] %}
                     <a href="{{url_for('newItem', name=category.name)}}">Add new item</a>
+                    {% endif %}
                 </div>
                 {% if items %}
                 {% for item in items %}
@@ -59,10 +67,12 @@
                         </div>
                         <div class="mdl-card__title">
                             <h2 class="mdl-card__title-text">{{item.name}}</h2>
+                            {% if item.user_id == session['user_id'] %}
                             <span class="item-manage-title">
                                 <a href="{{url_for('editItem', name=category.name, item=item.name)}}"><i class="material-icons">edit</i></a>
                                 <a href="{{url_for('deleteItem', name=category.name, id=item.id)}}" class="delete-btn" data-name="{{category.name}}" data-item="{{item.name}}"><i class="material-icons">delete</i></a>
                             </span>
+                            {% endif %}
                         </div>
                         <div class="mdl-card__supporting-text">
                             {{item.description}}

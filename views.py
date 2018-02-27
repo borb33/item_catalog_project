@@ -81,6 +81,9 @@ def showCategory(name):
 
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def newCategory():
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+
     categories = session.query(Category).all()
     if request.method == 'POST':
         file = request.files['file']
@@ -109,7 +112,8 @@ def newCategory():
         category = Category(
             name=name,
             description=description,
-            image=filename
+            image=filename,
+            user_id=login_session['user_id']
         )
         session.add(category)
         session.commit()
@@ -122,6 +126,15 @@ def newCategory():
 def editCategory(name):
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
+    
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+    elif category.user_id != login_session['user_id']:
+        return '''<script>
+                  alert("You are not authorized!");
+                  window.history.back();
+                  </script>'''
+    
     if request.method == 'POST':
         file = request.files['file']
         name = request.form['name']
@@ -173,6 +186,9 @@ def deleteCategory(id):
 
 @app.route('/catalog/<string:name>/new', methods=['GET', 'POST'])
 def newItem(name):
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+    
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
     if request.method == 'POST':
@@ -203,7 +219,8 @@ def newItem(name):
             name=name,
             image=filename,
             description=description,
-            category_id=category.id
+            category_id=category.id,
+            user_id=login_session['user_id']
         )
         session.add(item)
         session.commit()
@@ -220,6 +237,14 @@ def editItem(name, item):
     category = session.query(Category).filter_by(name=name).one()
     item = session.query(Item).filter_by(name=item,
                                          category_id=category.id).one()
+    if 'username' not in login_session:
+        return redirect(url_for('showLogin'))
+    elif item.user_id != login_session['user_id']:
+        return '''<script>
+                  alert("You are not authorized!");
+                  window.history.back();
+                  </script>'''
+    
     if request.method == 'POST':
         file = request.files['file']
         name = request.form['name']
@@ -274,10 +299,11 @@ def deleteItem(name, id):
 # Login functions
 @app.route('/login')
 def showLogin():
+    categories = session.query(Category).all()
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    return render_template('login.html', STATE=state)
+    return render_template('login.html', STATE=state, categories=categories)
 
 
 @app.route('/disconnect')
@@ -353,7 +379,6 @@ def gconnect():
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
-    print(gplus_id)
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
