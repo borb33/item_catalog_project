@@ -65,7 +65,11 @@ def uploaded_file(filename):
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
-    return render_template('catalog.html')
+    categories = session.query(Category).all()
+    items = session.query(Item).order_by(Item.id.desc()).limit(6)
+    return render_template('catalog.html',
+                           categories=categories,
+                           items=items)
 
 
 @app.route('/catalog/<string:name>')
@@ -126,7 +130,7 @@ def newCategory():
 def editCategory(name):
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
-    
+
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
     elif category.user_id != login_session['user_id']:
@@ -134,7 +138,7 @@ def editCategory(name):
                   alert("You are not authorized!");
                   window.history.back();
                   </script>'''
-    
+
     if request.method == 'POST':
         file = request.files['file']
         name = request.form['name']
@@ -188,7 +192,7 @@ def deleteCategory(id):
 def newItem(name):
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
-    
+
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(name=name).one()
     if request.method == 'POST':
@@ -244,7 +248,7 @@ def editItem(name, item):
                   alert("You are not authorized!");
                   window.history.back();
                   </script>'''
-    
+
     if request.method == 'POST':
         file = request.files['file']
         name = request.form['name']

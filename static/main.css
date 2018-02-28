@@ -315,6 +315,10 @@ footer .mdl-logo a {
   z-index: 4;
 }
 
+.mdl-card__supporting-text {
+  flex-grow: 1;
+}
+
 @media screen and (max-width: 1024px) {
   .category-manage {
     padding: 0 16px;

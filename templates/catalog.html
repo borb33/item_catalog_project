@@ -1,4 +1,59 @@
 {% extends "main.html" %}
 {% block content %}
-<p>Test</p>
+<div class="mdl-layout__drawer">
+    <h4>Categories</h4>
+    {%if 'username' in session %}
+    <a href="{{url_for('newCategory')}}"><h6>Add new category</h6></a>
+    {% endif %}
+    {% if categories %}
+    <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
+        {% for category in categories %}
+        <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
+        {% if category.user_id == session['user_id'] %}
+        <span class="category-manage">
+            <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
+            <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
+        </span>
+        {% endif %}
+        {% endfor %}
+    </nav>
+    {% endif %}
+</div>
+
+<main class="mdl-layout__content">
+<div class="site-content">
+    <div class="mdl-grid site-max-width">
+        <div class="mdl-cell mdl-cell--12-col mdl-card mdl-shadow--4dp page-content">
+            <div class="mdl-card__title">
+                <h3 class="mdl-card__title-text">
+                    Latest Items
+                </h3>
+            </div>
+            <div class="mdl-grid site-max-width">
+                {% if items %}
+                {% for item in items %}
+                    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+                        <div class="mdl-card__media">
+                            <img class="article-image" src="{{ url_for('uploaded_file', filename=item.image) }}" border="0" alt="{{item.name}}">
+                        </div>
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{item.name}}</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">
+                            {{item.description}}
+                        </div><br>
+                        <div class="mdl-card__actions mdl-card--border">
+                            <a class="mdl-button mdl-button--colored mdl-button--accent" href="{{url_for('showCategory', name=item.category.name)}}">
+                                {{item.category.name}}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% else %}
+                <p>Items not found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+  </div>
 {% endblock %}
