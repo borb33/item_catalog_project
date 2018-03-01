@@ -50,7 +50,7 @@ def upload_file(file):
                             secure_filename(file.filename)])
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     elif not allowed_file(file.filename):
-        # ERROR MESSAGE
+        flash('File type not allowed')
         return False
     return filename
 
@@ -99,13 +99,13 @@ def newCategory():
             newCategory = session.query(Category).filter_by(
                 name=name).one()
             if newCategory:
-                # ERROR MESSAGE
+                flash('Category name already used')
                 return redirect(request.url)
         except:
             pass
 
         if name == '' or description == '' or file.filename == '':
-            # ERROR MESSAGE
+            flash('All fields are required')
             return redirect(request.url)
 
         filename = upload_file(file)
@@ -121,6 +121,7 @@ def newCategory():
         )
         session.add(category)
         session.commit()
+        flash('New category %s successfully created' % category.name)
         return redirect(url_for('showCategory', name=name))
     else:
         return render_template('newCategory.html', categories=categories)
@@ -149,7 +150,7 @@ def editCategory(name):
             newCategory = session.query(Category).filter_by(
                 name=name).one()
             if newCategory.name != category.name:
-                # ERROR MESSAGE
+                flash('Category name already used')
                 return redirect(request.url)
         except:
             pass
@@ -160,7 +161,6 @@ def editCategory(name):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
                                        category.image))
             else:
-                # ERROR MESSAGE
                 return redirect(request.url)
 
         if name:
@@ -172,6 +172,7 @@ def editCategory(name):
 
         session.add(category)
         session.commit()
+        flash('Category successfully edited ')
         return redirect(url_for('showCategory', name=name))
     else:
         return render_template('editCategory.html',
@@ -184,6 +185,7 @@ def deleteCategory(id):
     if request.method == 'POST':
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], category.image))
         session.delete(category)
+        flash('Category %s deleted successfully' % category.name)
         session.commit()
         return 'OK'
 
@@ -205,13 +207,13 @@ def newItem(name):
             newItem = session.query(Item).filter_by(
                 name=name, category_id=category.id).one()
             if newItem:
-                # ERROR MESSAGE
+                flash('Item name already used')
                 return redirect(request.url)
         except:
             pass
 
         if name == '' or description == '' or file.filename == '':
-            # ERROR MESSAGE
+            flash('All fields are required')
             return redirect(request.url)
 
         filename = upload_file(file)
@@ -228,6 +230,7 @@ def newItem(name):
         )
         session.add(item)
         session.commit()
+        flash('New item %s successfully created' % category.name)
         return redirect(url_for('showCategory', name=category.name))
     else:
         return render_template('newItem.html',
@@ -259,7 +262,7 @@ def editItem(name, item):
             newItem = session.query(Item).filter_by(
                 name=name, category_id=category.id).one()
             if newItem.name != item.name:
-                # ERROR MESSAGE
+                flash('Item name already used')
                 return redirect(request.url)
         except:
             pass
@@ -270,7 +273,6 @@ def editItem(name, item):
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
                                        item.image))
             else:
-                # ERROR MESSAGE
                 return redirect(request.url)
 
         if name:
@@ -282,6 +284,7 @@ def editItem(name, item):
 
         session.add(item)
         session.commit()
+        flash('Item successfully edited ')
         return redirect(url_for('showCategory', name=category.name))
     else:
         return render_template('editItem.html',
@@ -296,6 +299,7 @@ def deleteItem(name, id):
     if request.method == 'POST':
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], item.image))
         session.delete(item)
+        flash('Item %s deleted successfully' % item.name)
         session.commit()
         return 'OK'
 
@@ -317,10 +321,10 @@ def disconnect():
             gdisconnect()
         del login_session['user_id']
         del login_session['provider']
-        # flash("You have successfully been logged out.")
+        flash("You have successfully been logged out")
         return redirect(url_for('showCatalog'))
     else:
-        # flash("You were not logged in")
+        flash("You were not logged in")
         return redirect(url_for('showCatalog'))
 
 

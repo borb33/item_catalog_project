@@ -35,6 +35,17 @@
             </span>
             {% endif %}
         </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="mdl-card__supporting-text messages">
+            <ul>
+            {% for message in messages %}
+                <li> {{ message }} </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
         <div class="mdl-card__media">
             <img class="article-image" src="{{ url_for('uploaded_file', filename=category.image) }}" border="0" alt="{{category.name}}">
         </div>

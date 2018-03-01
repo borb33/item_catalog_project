@@ -29,6 +29,17 @@
                     Latest Items
                 </h3>
             </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="mdl-card__supporting-text messages">
+                <ul>
+                {% for message in messages %}
+                    <li> {{ message }} </li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% endwith %}
             <div class="mdl-grid site-max-width">
                 {% if items %}
                 {% for item in items %}

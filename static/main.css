@@ -324,3 +324,14 @@ footer .mdl-logo a {
     padding: 0 16px;
   }
 }
+
+.messages {
+  text-align: center;
+  color: rgb(255,64,129);
+}
+
+.messages ul {
+  list-style-type: none;
+  font-size: 14px;
+  text-transform: uppercase;
+}
