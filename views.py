@@ -469,6 +469,34 @@ def getUserID(email):
         return None
 
 
+# JSON APIs Endpoints
+@app.route('/api/v1')
+def catalogJSON():
+    categories = session.query(Category).all()
+    return jsonify(categories=[r.serialize for r in categories])
+
+
+@app.route('/api/v1/category/<int:category_id>')
+def categoryJSON(category_id):
+    try:
+        category = session.query(Category).filter_by(id=category_id).one()
+        items = session.query(Item).filter_by(category_id=category_id).all()
+    except:
+        return "Category not found"
+    return jsonify(Items=[i.serialize for i in items])
+
+
+@app.route('/api/v1/category/<int:category_id>/item/<int:item_id>')
+def itemJSON(category_id, item_id):
+    try:
+        item = session.query(Item).filter_by(id=item_id,
+                                             category_id=category_id
+                                             ).one()
+    except:
+        return "Item not found"
+    return jsonify(Item=item.serialize)
+
+
 if __name__ == '__main__':
     app.debug = True
     app.secret_key = ''.join(
