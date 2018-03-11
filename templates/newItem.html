@@ -44,6 +44,7 @@
           <div class="mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                 <form action="{{url_for('newItem', name=category.name)}}" method="POST" class="form-contact" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" value="{{category.name}}" readonly>
                         <label class="mdl-textfield__label" for="Name">Category...</label>

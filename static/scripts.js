@@ -15,8 +15,20 @@ $(function() {
         var itemMessage = item !== undefined ? 'the item '+item+' for ' : '';
 
         if(confirm('Are you sure to delete '+itemMessage+'the category '+name+'?')) {
-            $.post($(this).attr('href'), function(data) {
-                window.location.replace(location);
+            // $.post($(this).attr('href'), function(data) {
+            //     window.location.replace(location);
+            // });
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('href'),
+                success: function(data) {
+                    window.location.replace(location);
+                },
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
             });
         }
     });
