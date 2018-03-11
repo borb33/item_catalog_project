@@ -15,9 +15,6 @@ $(function() {
         var itemMessage = item !== undefined ? 'the item '+item+' for ' : '';
 
         if(confirm('Are you sure to delete '+itemMessage+'the category '+name+'?')) {
-            // $.post($(this).attr('href'), function(data) {
-            //     window.location.replace(location);
-            // });
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('href'),

@@ -327,11 +327,27 @@ footer .mdl-logo a {
 
 .messages {
   text-align: center;
-  color: rgb(255,64,129);
+  color: rgb(255, 22, 46);
 }
 
 .messages ul {
   list-style-type: none;
   font-size: 14px;
   text-transform: uppercase;
+}
+
+.mdl-button--accent.mdl-button--accent {
+  color: rgb(255, 22, 46);
+}
+
+a {
+  color: rgb(255, 22, 46);
+}
+
+.mdl-button--accent.mdl-button--accent.mdl-button--raised {
+  background-color: rgb(255, 22, 46);
+}
+
+.profile-picture {
+  max-width: 30%;
 }
