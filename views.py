@@ -21,10 +21,11 @@ from flask import make_response
 import requests
 
 UPLOAD_FOLDER = 'uploads/'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 csrf = CSRFProtect(app)
 
 CLIENT_ID = json.loads(
@@ -481,7 +482,6 @@ def catalogJSON():
 @app.route('/api/v1/category/<int:category_id>')
 def categoryJSON(category_id):
     try:
-        category = session.query(Category).filter_by(id=category_id).one()
         items = session.query(Item).filter_by(category_id=category_id).all()
     except:
         return "Category not found"
