@@ -2,3 +2,4 @@ uploads/
 catalog.db
 models.pyc
 client_secrets.json
+__pycache__/

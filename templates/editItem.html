@@ -11,7 +11,7 @@
         <a class="mdl-navigation__link" href="{{url_for('showCategory', name=category.name)}}">{{category.name}}</a>
         {% if category.user_id == session['user_id'] %}
         <span class="category-manage">
-            <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> | 
+            <a href="{{url_for('editCategory', name=category.name)}}">Edit</a> |
             <a href="{{url_for('deleteCategory', id=category.id)}}" class="delete-btn" data-name="{{category.name}}">Delete</a>
         </span>
         {% endif %}
@@ -44,17 +44,16 @@
           <div class="mdl-cell mdl-cell--12-col">
               <div class="mdl-card__supporting-text">
                 <form action="{{url_for('editItem', name=category.name, item=item.name)}}" method="POST" class="form-contact" enctype="multipart/form-data">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" value="{{category.name}}" readonly>
                         <label class="mdl-textfield__label" for="Name">Category...</label>
                     </div>
-                
+
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" id="Name" name="name" value="{{item.name}}">
                         <label class="mdl-textfield__label" for="Name">Name...</label>
                     </div>
-                    
+
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <textarea class="mdl-textfield__input" type="text" rows="5" id="note" name="description">{{item.description}}</textarea>
                         <label class="mdl-textfield__label" for="note">Enter description</label>

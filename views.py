@@ -7,7 +7,6 @@ from werkzeug.utils import secure_filename
 from flask import session as login_session
 import random
 import string
-from flask_wtf.csrf import CSRFProtect
 
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -26,7 +25,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
-csrf = CSRFProtect(app)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
