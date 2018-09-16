@@ -27,10 +27,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('/var/www/html/catalog/client_secrets.json', 'r').read())['web']['client_id']
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('postgresql://catalog:catalog@localhost:5432/catalog')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -341,7 +341,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/var/www/html/catalog/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -352,10 +352,10 @@ def gconnect():
 
     # Check that the access token is valid.
     access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-           % access_token)
+    url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={0}'.format(access_token)
     h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    req = h.request(url, 'GET')[1]
+    result = json.loads(req)
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -498,8 +498,7 @@ def itemJSON(category_id, item_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
     app.secret_key = ''.join(
                     random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
